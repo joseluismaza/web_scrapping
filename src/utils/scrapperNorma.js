@@ -3,6 +3,8 @@ const fs = require("fs");
 
 const NormaComicsArray = [];
 
+let modalCookies = false;
+
 //Funciones del scrapper en el navegador
 const scrapperNorma = async (url) => {
   console.log(url);
@@ -14,6 +16,16 @@ const scrapperNorma = async (url) => {
   await page.goto(url);
   //Cambiar tamaño página
   await page.setViewport({ width: 1080, height: 720 });
+  //Aceptar Cookies
+  if (!modalCookies) {
+    try {
+      await page.waitForSelector('#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll', { timeout: 5000 });
+      await page.click('#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll')
+      console.log("Cookies Aceptadas");
+    } catch (error) {
+      console.log("No se encontraron las cookies o ya fueron aceptadas");
+    }
+  }
   //Repetir el proceso en cada página
   repeat(page, browser);
 };

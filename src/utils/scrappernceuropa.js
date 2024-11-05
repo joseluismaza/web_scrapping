@@ -2,6 +2,7 @@ const puppeteer = require("puppeteer");
 const fs = require("fs");
 
 const NCEuropaArray = [];
+let modalCookies = false;
 
 //Funciones del scrapper en el navegador
 const scrapperNormaEuropa = async (url) => {
@@ -14,6 +15,16 @@ const scrapperNormaEuropa = async (url) => {
   await page.goto(url);
   //Cambiar tamaño página
   await page.setViewport({ width: 1080, height: 720 });
+  //Aceptar cookies
+  if (!modalCookies) {
+    try {
+      await page.waitForSelector('#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll', { timeout: 5000 });
+      await page.click('#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll')
+      console.log("Cookies Aceptadas");
+    } catch (error) {
+      console.log("No se encontraron las cookies o ya fueron aceptadas");
+    }
+  }
   //Repetir el proceso en cada página
   repeat(page, browser);
 };

@@ -3,6 +3,7 @@ const fs = require("fs");
 
 const paniniArray = [];
 
+let modalsCookie = false;
 //Funciones del scrapper en el navegador
 const scrapperPanini = async (url) => {
   console.log(url);
@@ -14,9 +15,18 @@ const scrapperPanini = async (url) => {
   await page.goto(url);
   //Cambiar tamaño página
   await page.setViewport({ width: 1080, height: 720 });
-
+  //Aceptar cookies
+  if (!modalsCookie) {
+    try {
+      await page.waitForSelector('#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll', { timeout: 5000 });
+      await page.click('#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll')
+      modalsCookie = true;
+      console.log("Cookies Aceptadas");
+    } catch (error) {
+      console.log("No se encontraron las cookies o ya fueron aceptadas");
+    }
+  }
   //repetir el proceso en cada página
-
   repeat(page, browser);
 };
 //Función para extraer los datos
